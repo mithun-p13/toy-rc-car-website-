@@ -1,334 +1,103 @@
-import { useState } from "react";
-import { Battery, Timer, Ruler, X, ShoppingBag, Gauge as GaugeIcon } from "lucide-react";
+import streamlit as st
 
-const FONTS = `
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap');
-.font-display { font-family: 'Rajdhani', sans-serif; }
-.font-body { font-family: 'Inter', sans-serif; }
-.font-mono { font-family: 'JetBrains Mono', monospace; }
-.tread {
-  background-image: repeating-linear-gradient(
-    115deg,
-    #FF6B35 0px, #FF6B35 10px,
-    transparent 10px, transparent 24px
-  );
-}
-`;
+st.set_page_config(page_title="ToyBox Catalog", page_icon="🧸", layout="wide")
 
-const CARS = [
-  {
-    id: "ridgeback",
-    name: "Ridgeback X4",
-    category: "Off-Road",
-    scale: "1:10",
-    topSpeed: 65,
-    runtime: 25,
-    battery: "7.4V 3000mAh",
-    price: 189.99,
-    blurb: "4WD chassis with long-travel suspension for broken ground.",
-  },
-  {
-    id: "apex",
-    name: "Apex Drift GT",
-    category: "Drift",
-    scale: "1:10",
-    topSpeed: 55,
-    runtime: 20,
-    battery: "7.4V 2200mAh",
-    price: 159.99,
-    blurb: "Tuned for oversteer, with swappable drift tires.",
-  },
-  {
-    id: "crusher",
-    name: "Crusher MX",
-    category: "Monster Truck",
-    scale: "1:8",
-    topSpeed: 45,
-    runtime: 30,
-    battery: "11.1V 5000mAh",
-    price: 229.99,
-    blurb: "Oversized tires and reinforced axles for backyard jumps.",
-  },
-  {
-    id: "sandstorm",
-    name: "Sandstorm Buggy",
-    category: "Buggy",
-    scale: "1:10",
-    topSpeed: 70,
-    runtime: 22,
-    battery: "7.4V 3000mAh",
-    price: 174.99,
-    blurb: "Lightweight shell built for wide-open sprints.",
-  },
-  {
-    id: "nightfall",
-    name: "Nightfall Crawler",
-    category: "Rock Crawler",
-    scale: "1:12",
-    topSpeed: 12,
-    runtime: 60,
-    battery: "7.4V 2000mAh",
-    price: 139.99,
-    blurb: "Low gearing and deep articulation for technical climbs.",
-  },
-  {
-    id: "velocity",
-    name: "Velocity Spec R",
-    category: "Touring",
-    scale: "1:10",
-    topSpeed: 80,
-    runtime: 18,
-    battery: "7.4V 2200mAh",
-    price: 249.99,
-    blurb: "Belt-driven touring platform for tarmac and indoor tracks.",
-  },
-];
+# ---------- Sample product data ----------
+TOYS = [
+    {"name": "Wooden Building Blocks", "category": "Building & Construction", "price": 19.99, "age": "2-5 yrs", "emoji": "🧱", "desc": "100-piece natural wood block set for creative building."},
+    {"name": "Remote Control Race Car", "category": "Vehicles", "price": 34.99, "age": "6-10 yrs", "emoji": "🏎️", "desc": "High-speed RC car with rechargeable battery."},
+    {"name": "Plush Teddy Bear", "category": "Stuffed Animals", "price": 14.99, "age": "0-3 yrs", "emoji": "🧸", "desc": "Soft, cuddly bear made from hypoallergenic fabric."},
+    {"name": "Classic Jigsaw Puzzle (500pc)", "category": "Puzzles & Games", "price": 12.49, "age": "8+ yrs", "emoji": "🧩", "desc": "Beautiful landscape puzzle for family game night."},
+    {"name": "Superhero Action Figure Set", "category": "Action Figures", "price": 24.99, "age": "4-8 yrs", "emoji": "🦸", "desc": "Set of 5 poseable superhero figures."},
+    {"name": "Dollhouse with Furniture", "category": "Dolls & Dollhouses", "price": 49.99, "age": "3-7 yrs", "emoji": "🏠", "desc": "Three-story dollhouse with miniature furniture included."},
+    {"name": "Toy Drone with Camera", "category": "Vehicles", "price": 59.99, "age": "10+ yrs", "emoji": "🚁", "desc": "Easy-fly drone with built-in HD camera."},
+    {"name": "Art & Craft Kit", "category": "Arts & Crafts", "price": 17.99, "age": "5-10 yrs", "emoji": "🎨", "desc": "Paints, brushes, and paper for budding artists."},
+    {"name": "Board Game: Treasure Hunt", "category": "Puzzles & Games", "price": 22.99, "age": "7+ yrs", "emoji": "🗺️", "desc": "Family board game with treasure-map adventure."},
+    {"name": "Stacking Rings Toy", "category": "Stuffed Animals", "price": 9.99, "age": "0-2 yrs", "emoji": "🌈", "desc": "Colorful stacking rings to develop motor skills."},
+    {"name": "Robot Building Kit", "category": "Building & Construction", "price": 39.99, "age": "8+ yrs", "emoji": "🤖", "desc": "STEM kit to build and program a small robot."},
+    {"name": "Toy Train Set", "category": "Vehicles", "price": 44.99, "age": "3-6 yrs", "emoji": "🚂", "desc": "Wooden train set with tracks, tunnels, and bridges."},
+]
 
-const CATEGORIES = ["All", "Off-Road", "Drift", "Monster Truck", "Buggy", "Rock Crawler", "Touring"];
-const MAX_SPEED = 80;
+CATEGORIES = sorted(set(t["category"] for t in TOYS))
 
-function SpeedGauge({ value, max = MAX_SPEED, size = "lg" }) {
-  const angle = -90 + (value / max) * 180;
-  const rad = (angle * Math.PI) / 180;
-  const cx = 60, cy = 60, r = 46;
-  const nx = cx + r * Math.cos(rad);
-  const ny = cy + r * Math.sin(rad);
-  const dims = size === "lg" ? "w-40 h-24" : "w-24 h-16";
+# ---------- Sidebar filters ----------
+st.sidebar.title("🧸 ToyBox")
+st.sidebar.markdown("Find the perfect toy!")
 
-  return (
-    <div className={`relative ${dims}`}>
-      <svg viewBox="0 0 120 70" className="w-full h-full">
-        <path d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="#3A3F47" strokeWidth="6" strokeLinecap="round" />
-        <path
-          d="M10 60 A50 50 0 0 1 110 60"
-          fill="none"
-          stroke="#FF6B35"
-          strokeWidth="6"
-          strokeLinecap="round"
-          strokeDasharray={`${(value / max) * 157} 157`}
-        />
-        {[0, 20, 40, 60, 80].map((t) => {
-          const a = (-90 + (t / max) * 180) * (Math.PI / 180);
-          const ix = cx + (r - 9) * Math.cos(a);
-          const iy = cy + (r - 9) * Math.sin(a);
-          return (
-            <text key={t} x={ix} y={iy} fill="#6B7280" fontSize="7" textAnchor="middle" className="font-mono">
-              {t}
-            </text>
-          );
-        })}
-        <line x1={cx} y1={cy} x2={nx} y2={ny} stroke="#D4FF3F" strokeWidth="2.5" strokeLinecap="round" />
-        <circle cx={cx} cy={cy} r="3" fill="#D4FF3F" />
-      </svg>
-      <div className="absolute bottom-0 left-0 right-0 text-center">
-        <span className="font-mono text-sm text-[#F2F3F5] font-semibold">{value}</span>
-        <span className="font-mono text-[10px] text-[#8B919A]"> km/h</span>
-      </div>
-    </div>
-  );
-}
+search = st.sidebar.text_input("Search toys", "")
 
-function CarCard({ car, onAdd }) {
-  return (
-    <div className="bg-[#1F2228] border border-[#2C3038] rounded-lg p-5 flex flex-col gap-4 hover:border-[#FF6B35]/50 transition-colors">
-      <div>
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[#FF6B35]">{car.category}</p>
-        <h3 className="font-display text-2xl font-semibold text-[#F2F3F5] leading-tight">{car.name}</h3>
-        <p className="font-body text-sm text-[#8B919A] mt-1">{car.blurb}</p>
-      </div>
+selected_categories = st.sidebar.multiselect(
+    "Category", CATEGORIES, default=CATEGORIES
+)
 
-      <div className="flex items-center justify-center bg-[#15171A] rounded-md py-3">
-        <SpeedGauge value={car.topSpeed} />
-      </div>
+min_price, max_price = st.sidebar.slider(
+    "Price range ($)", 0.0, 60.0, (0.0, 60.0), step=1.0
+)
 
-      <div className="grid grid-cols-3 gap-2 font-mono text-xs text-[#C9CDD3]">
-        <div className="flex flex-col items-center gap-1 bg-[#15171A] rounded-md py-2">
-          <Ruler size={14} className="text-[#8B919A]" />
-          {car.scale}
-        </div>
-        <div className="flex flex-col items-center gap-1 bg-[#15171A] rounded-md py-2">
-          <Timer size={14} className="text-[#8B919A]" />
-          {car.runtime} min
-        </div>
-        <div className="flex flex-col items-center gap-1 bg-[#15171A] rounded-md py-2 text-center px-1">
-          <Battery size={14} className="text-[#8B919A]" />
-          {car.battery}
-        </div>
-      </div>
+sort_option = st.sidebar.selectbox(
+    "Sort by", ["Name (A-Z)", "Price (Low to High)", "Price (High to Low)"]
+)
 
-      <div className="flex items-center justify-between pt-1">
-        <span className="font-display text-xl font-semibold text-[#F2F3F5]">${car.price.toFixed(2)}</span>
-        <button
-          onClick={() => onAdd(car)}
-          className="font-body text-sm font-medium bg-[#FF6B35] text-[#15171A] px-4 py-2 rounded-md hover:bg-[#FF8255] transition-colors"
-        >
-          Add to garage
-        </button>
-      </div>
-    </div>
-  );
-}
+# ---------- Main page ----------
+st.title("🧸 ToyBox — Toy Catalog")
+st.write("Browse our collection of toys for every age and interest!")
 
-export default function RCGarageShop() {
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [garage, setGarage] = useState([]);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+# Filter
+filtered = [
+    t for t in TOYS
+    if t["category"] in selected_categories
+    and min_price <= t["price"] <= max_price
+    and search.lower() in t["name"].lower()
+]
 
-  const filtered = activeCategory === "All" ? CARS : CARS.filter((c) => c.category === activeCategory);
+# Sort
+if sort_option == "Name (A-Z)":
+    filtered.sort(key=lambda t: t["name"])
+elif sort_option == "Price (Low to High)":
+    filtered.sort(key=lambda t: t["price"])
+elif sort_option == "Price (High to Low)":
+    filtered.sort(key=lambda t: t["price"], reverse=True)
 
-  const addToGarage = (car) => {
-    setGarage((prev) => [...prev, car]);
-    setDrawerOpen(true);
-  };
+st.markdown(f"**{len(filtered)} toy(s) found**")
+st.divider()
 
-  const removeFromGarage = (index) => {
-    setGarage((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const total = garage.reduce((sum, c) => sum + c.price, 0);
-  const fastest = CARS.reduce((a, b) => (b.topSpeed > a.topSpeed ? b : a));
-
-  return (
-    <div className="min-h-screen bg-[#15171A] font-body text-[#F2F3F5]">
-      <style>{FONTS}</style>
-
-      {/* Nav */}
-      <header className="flex items-center justify-between px-6 md:px-12 py-5 border-b border-[#2C3038]">
-        <span className="font-display text-xl font-bold tracking-wide">
-          RUSH<span className="text-[#FF6B35]">RC</span>
-        </span>
-        <button
-          onClick={() => setDrawerOpen(true)}
-          className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-[#C9CDD3] hover:text-[#FF6B35] transition-colors"
-        >
-          <ShoppingBag size={16} />
-          Garage ({garage.length})
-        </button>
-      </header>
-
-      {/* Hero */}
-      <section className="px-6 md:px-12 py-14 md:py-20 grid md:grid-cols-2 gap-10 items-center">
-        <div>
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-[#D4FF3F] mb-3">
-            RC Garage // Full Throttle Catalog
-          </p>
-          <h1 className="font-display text-4xl md:text-6xl font-bold leading-[1.05] mb-4">
-            Built for the dirt.
-            <br />
-            Tuned for speed.
-          </h1>
-          <p className="font-body text-[#8B919A] max-w-md mb-6">
-            Six platforms, six personalities — from crawlers that climb at a walking
-            pace to touring cars that hit eighty. Every spec sheet below is real, so
-            you know exactly what's going in the garage.
-          </p>
-          <a
-            href="#catalog"
-            className="inline-block font-body text-sm font-medium bg-[#FF6B35] text-[#15171A] px-5 py-3 rounded-md hover:bg-[#FF8255] transition-colors"
-          >
-            View the lineup
-          </a>
-        </div>
-
-        <div className="bg-[#1F2228] border border-[#2C3038] rounded-lg p-8 flex flex-col items-center">
-          <p className="font-mono text-xs uppercase tracking-widest text-[#8B919A] mb-4">
-            Fastest in stock — {fastest.name}
-          </p>
-          <SpeedGauge value={fastest.topSpeed} />
-          <div className="flex items-center gap-2 mt-4 text-[#6B7280] font-mono text-xs">
-            <GaugeIcon size={14} />
-            0 – {MAX_SPEED} km/h scale, true to spec
-          </div>
-        </div>
-      </section>
-
-      <div className="h-2 tread" />
-
-      {/* Filters */}
-      <section id="catalog" className="px-6 md:px-12 pt-10 pb-4">
-        <div className="flex gap-2 flex-wrap">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`font-mono text-xs uppercase tracking-widest px-4 py-2 rounded-md border transition-colors ${
-                activeCategory === cat
-                  ? "bg-[#FF6B35] text-[#15171A] border-[#FF6B35]"
-                  : "border-[#2C3038] text-[#C9CDD3] hover:border-[#FF6B35]/60"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {/* Grid */}
-      <section className="px-6 md:px-12 pb-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filtered.map((car) => (
-            <CarCard key={car.id} car={car} onAdd={addToGarage} />
-          ))}
-        </div>
-      </section>
-
-      <div className="h-2 tread" />
-
-      {/* Footer */}
-      <footer className="px-6 md:px-12 py-8 flex flex-col md:flex-row justify-between gap-2 text-[#6B7280] font-mono text-xs">
-        <span>RUSH RC — spec sheets you can trust, tracks you can't.</span>
-        <span>Batteries and chargers sold separately.</span>
-      </footer>
-
-      {/* Garage drawer */}
-      {drawerOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end" role="dialog" aria-label="Garage">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setDrawerOpen(false)} />
-          <div className="relative w-full max-w-sm bg-[#1F2228] border-l border-[#2C3038] h-full p-6 flex flex-col">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="font-display text-2xl font-semibold">Your garage</h2>
-              <button
-                onClick={() => setDrawerOpen(false)}
-                className="text-[#8B919A] hover:text-[#F2F3F5] focus:outline-none focus:ring-2 focus:ring-[#FF6B35] rounded"
-                aria-label="Close garage"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            {garage.length === 0 ? (
-              <p className="font-body text-sm text-[#8B919A]">
-                Nothing parked here yet. Add a car from the lineup to get started.
-              </p>
-            ) : (
-              <div className="flex-1 overflow-y-auto flex flex-col gap-3">
-                {garage.map((car, i) => (
-                  <div key={i} className="flex items-center justify-between bg-[#15171A] rounded-md px-3 py-2">
-                    <div>
-                      <p className="font-body text-sm font-medium">{car.name}</p>
-                      <p className="font-mono text-xs text-[#8B919A]">${car.price.toFixed(2)}</p>
+if not filtered:
+    st.info("No toys match your filters. Try adjusting them!")
+else:
+    cols_per_row = 3
+    for i in range(0, len(filtered), cols_per_row):
+        cols = st.columns(cols_per_row)
+        for col, toy in zip(cols, filtered[i:i + cols_per_row]):
+            with col:
+                st.markdown(
+                    f"""
+                    <div style="border:1px solid #ddd; border-radius:12px; padding:16px; text-align:center; margin-bottom:16px;">
+                        <div style="font-size:48px;">{toy['emoji']}</div>
+                        <h4>{toy['name']}</h4>
+                        <p style="color:gray; font-size:13px;">{toy['category']} • Ages {toy['age']}</p>
+                        <p>{toy['desc']}</p>
+                        <h3>${toy['price']:.2f}</h3>
                     </div>
-                    <button
-                      onClick={() => removeFromGarage(i)}
-                      className="text-[#6B7280] hover:text-[#FF6B35] focus:outline-none focus:ring-2 focus:ring-[#FF6B35] rounded"
-                      aria-label={`Remove ${car.name}`}
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+                    """,
+                    unsafe_allow_html=True,
+                )
+                if st.button("Add to Cart 🛒", key=toy["name"]):
+                    if "cart" not in st.session_state:
+                        st.session_state.cart = []
+                    st.session_state.cart.append(toy["name"])
+                    st.toast(f"Added '{toy['name']}' to cart!")
 
-            {garage.length > 0 && (
-              <div className="border-t border-[#2C3038] pt-4 mt-4 flex items-center justify-between">
-                <span className="font-body text-sm text-[#8B919A]">Total</span>
-                <span className="font-display text-xl font-semibold">${total.toFixed(2)}</span>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+# ---------- Cart summary in sidebar ----------
+st.sidebar.divider()
+st.sidebar.subheader("🛒 Your Cart")
+cart = st.session_state.get("cart", [])
+if cart:
+    for item in cart:
+        st.sidebar.write(f"- {item}")
+    total = sum(t["price"] for t in TOYS if t["name"] in cart)
+    st.sidebar.markdown(f"**Total: ${total:.2f}**")
+    if st.sidebar.button("Clear Cart"):
+        st.session_state.cart = []
+        st.rerun()
+else:
+    st.sidebar.write("Your cart is empty.")
