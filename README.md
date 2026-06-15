@@ -32,6 +32,7 @@ toystore1/
 ├── data.py             # Toy dataset
 ├── requirements.txt    # Dependencies
 └── README.md
+
 🚀 How to Run This Project
 1️⃣ Install dependencies
 pip install -r requirements.txt
