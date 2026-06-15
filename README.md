@@ -1,59 +1,45 @@
 # 🧸 Toys Catalog App
 
-A modern, full-featured web application for browsing, managing, and discovering toys. Designed to make the toy shopping experience fun, simple, and enjoyable for both kids and parents. Whether you are looking for the latest action figures, classic board games, or educational puzzles, the Toys Catalog App brings everything together in one place.
+A modern and interactive toys catalog web application built using **Streamlit** and **Python**. This app allows users to explore, search, and filter a wide variety of toys through a clean and user-friendly interface. The goal of this project is to make toy discovery simple, fast, and enjoyable without the need for any complex frontend technology. Everything is powered by Python, making it easy to maintain, extend, and deploy.
 
----
+The **Toys Catalog App** was created to solve a real-world problem — managing and showcasing a large collection of toys in an organized and visually appealing way. Instead of scrolling through spreadsheets or plain lists, users get a fully interactive web experience where they can filter toys by category, search by name or brand, view detailed product information, and even see data visualizations that give insights into the catalog. The app is perfect for small toy businesses, independent sellers, collectors, or anyone who wants a simple yet powerful way to manage and display a toy inventory.
 
-## 📖 About the Project
+What makes this app special is how quickly it can be set up and deployed. Thanks to Streamlit, there is no need to write HTML, CSS, or JavaScript. Everything is written in pure Python, which means developers can focus entirely on the logic and data rather than worrying about frontend design. The app can be deployed to **Streamlit Cloud** in just a few clicks and shared with anyone via a public link, making it accessible from any device and any browser.
 
-The **Toys Catalog App** was built with the goal of creating a seamless and visually appealing platform where users can explore a wide variety of toys. The app organizes toys into well-defined categories, making it easy to find exactly what you are looking for. Each toy has its own dedicated page with detailed information including description, price, age recommendation, brand, and stock availability.
-
-From the admin side, store managers can easily add new toys, update existing listings, manage categories, and monitor inventory — all through a clean and intuitive dashboard. The app is designed to scale, meaning new categories, brands, and features can be added with minimal effort.
-
-This project was developed with a focus on clean code, good user experience, and maintainability. It follows modern web development best practices and is structured in a way that makes it easy for developers to contribute or extend the functionality.
+The application supports multiple pages including a main catalog page, an individual product detail view, and a password-protected admin panel where authorized users can add new toys, update existing entries, or remove toys from the catalog. Data can be managed through a CSV or Excel file, making it extremely easy to update the catalog without touching the code. The app also includes interactive charts and graphs powered by Plotly, giving users visual insights such as toy distribution by category, price range analysis, and brand popularity.
 
 ---
 
 ## ✨ Features
 
-- 🔍 **Search & Filter** — Quickly search toys by name, brand, category, and age group to find exactly what you need
-- 🛒 **Product Detail Pages** — Each toy has a dedicated page with full descriptions, multiple images, pricing, and real-time availability status
-- 🗂️ **Category Management** — Toys are neatly organized into categories such as Action Figures, Puzzles, Board Games, Educational Toys, Outdoor Toys, and more
-- 📦 **Inventory Tracking** — Admins can monitor stock levels and update availability in real time to avoid overselling
-- 🖼️ **Image Gallery** — Each toy supports multiple images so users can view the product from different angles
-- 🔐 **Admin Dashboard** — A secure and easy-to-use dashboard for adding, editing, and deleting toy listings
-- 📱 **Responsive Design** — The app is fully optimized for mobile phones, tablets, and desktop screens
-- 🌙 **Dark Mode** — Users can switch between light and dark themes based on their preference
-- ⭐ **Ratings & Reviews** — Users can leave ratings and reviews to help others make informed decisions
-- 🔔 **Stock Alerts** — Users can subscribe to be notified when an out-of-stock toy becomes available again
+- 🔍 **Search & Filter** — Search toys by name, brand, category, and age group using interactive Streamlit widgets
+- 🛒 **Product Detail View** — View full toy details including description, price, age recommendation, and stock availability
+- 🗂️ **Category Sidebar** — Navigate toy categories easily from the Streamlit sidebar
+- 📊 **Data Visualizations** — Charts showing toy distribution by category, price range, and brand using Plotly
+- 🖼️ **Image Display** — Toy images rendered beautifully using `st.image()`
+- 📁 **CSV / Excel Upload** — Upload and update toy data directly through `st.file_uploader()`
+- 🔐 **Admin Panel** — Password-protected section to manage toy listings securely
+- 🌙 **Light & Dark Theme** — Supports Streamlit's built-in theme switching
+- 📱 **Responsive Layout** — Works seamlessly across all screen sizes and devices
+- 🚀 **One-Click Deployment** — Deploy instantly to Streamlit Cloud and share with anyone
 
 ---
 
 ## 🛠 Tech Stack
 
-The application is built using a modern and reliable set of technologies carefully chosen to ensure performance, scalability, and a great developer experience.
-
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React / Vue / Next.js *(update as needed)* |
-| Backend | Node.js / Express / Django *(update as needed)* |
-| Database | MongoDB / PostgreSQL / Firebase *(update as needed)* |
-| Styling | Tailwind CSS / Bootstrap / SCSS *(update as needed)* |
-| Authentication | JWT / Firebase Auth *(update as needed)* |
-| Image Storage | Cloudinary / AWS S3 *(update as needed)* |
-| Hosting | Vercel / Netlify / Heroku *(update as needed)* |
+| Framework | Streamlit |
+| Language | Python 3.10+ |
+| Data Handling | Pandas |
+| Visualization | Plotly / Matplotlib |
+| Database | CSV / Excel / SQLite |
+| Authentication | Streamlit Authenticator |
+| Deployment | Streamlit Cloud |
 
 ---
 
 ## 🏁 Getting Started
-
-Follow the steps below to get the project running on your local machine for development and testing purposes.
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) v18 or higher
-- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
-- [Git](https://git-scm.com/)
 
 ### Installation
 
@@ -64,62 +50,37 @@ git clone https://github.com/mithun-p13/toys-catalog-app.git
 cd toys-catalog-app
 ```
 
-2. **Install dependencies**
+2. **Create a virtual environment**
 
 ```bash
-npm install
+python -m venv venv
+source venv/bin/activate      # On Windows: venv\Scripts\activate
 ```
 
-3. **Set up environment variables** — Create a `.env` file in the root directory:
-
-```env
-PORT=3000
-NODE_ENV=development
-DATABASE_URL=your_database_connection_string
-JWT_SECRET=your_jwt_secret_key
-CLOUDINARY_URL=your_cloudinary_url
-```
-
-4. **Run the development server**
+3. **Install dependencies**
 
 ```bash
-npm run dev
+pip install -r requirements.txt
 ```
 
-The app will be available at `http://localhost:3000`.
+4. **Run the app**
+
+```bash
+streamlit run app.py
+```
+
+The app will open in your browser at `http://localhost:8501`
 
 ---
 
-## 📡 API Endpoints
+## 🚀 Deploy on Streamlit Cloud
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/toys` | Get all toys |
-| GET | `/api/toys/:id` | Get a single toy by ID |
-| POST | `/api/toys` | Add a new toy *(Admin only)* |
-| PUT | `/api/toys/:id` | Update toy details *(Admin only)* |
-| DELETE | `/api/toys/:id` | Delete a toy *(Admin only)* |
-| GET | `/api/categories` | Get all categories |
-| GET | `/api/toys?category=:name` | Filter toys by category |
-| GET | `/api/toys?search=:query` | Search toys by name |
+1. Push your project to GitHub
+2. Go to [streamlit.io/cloud](https://streamlit.io/cloud)
+3. Click **New App** and select your repository
+4. Set the main file as `app.py` and click **Deploy**
 
----
-
-## 🤝 Contributing
-
-Contributions are always welcome! If you have an idea for a new feature, a bug fix, or an improvement, feel free to open an issue or submit a pull request. Please make sure your code is clean, well-commented, and follows the existing code style of the project.
-
-1. Fork the repository
-2. Create a new branch: `git checkout -b feature/your-feature-name`
-3. Commit your changes: `git commit -m "Add your feature"`
-4. Push to the branch: `git push origin feature/your-feature-name`
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
+Your app will be live and shareable within minutes.
 
 ---
 
