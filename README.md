@@ -46,8 +46,8 @@ The application supports multiple pages including a main catalog page, an indivi
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/mithun-p13/toys-catalog-app.git
-cd toys-catalog-app
+git clone https://github.com/mithun-p13/rc-garage-shop.jsx.git
+cd rc-garage-shop.jsx
 ```
 
 2. **Create a virtual environment**
@@ -88,4 +88,4 @@ Your app will be live and shareable within minutes.
 
 **Mithun** — [@mithun-p13](https://github.com/mithun-p13)
 
-Project Link: [https://github.com/mithun-p13/toys-catalog-app](https://github.com/mithun-p13/toys-catalog-app)
+Project Link: [https://github.com/mithun-p13/rc-garage-shop.jsx](https://github.com/mithun-p13/rc-garage-shop.jsx)
