@@ -33,7 +33,10 @@ toystore1/
 ├── requirements.txt    # Dependencies
 └── README.md
 
+
+
 🚀 How to Run This Project
+
 1️⃣ Install dependencies
 pip install -r requirements.txt
 2️⃣ Run the app
